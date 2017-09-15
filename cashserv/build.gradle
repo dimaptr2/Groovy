@@ -1,0 +1,43 @@
+group 'ru.velkomfood.fin.cash3.services'
+version '3.5'
+
+apply plugin: 'groovy'
+//apply plugin: 'application'
+//mainClassName = group + '.Starter'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: '/usr/sap/JCo', include: '*.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+
+    baseName = project.name
+    version = project.version
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+
+    def depTree = fileTree(dir: '/usr/sap/JCo')
+    depTree.include '**/*.jar'
+    depTree.exclude '**/*.so'
+
+    def myClassPath = ''
+    // Build the list with the classpath variables
+    depTree.each { file -> myClassPath += ('/usr/sap/JCo/' + file.name + ' ') }
+
+    manifest {
+        attributes(
+                'Main-Class': 'ru.velkomfood.fin.cash3.services.Starter',
+                'Class-Path': myClassPath
+        )
+    }
+
+}
+
+task deleteOut(type: Delete) {
+    delete 'out'
+}
