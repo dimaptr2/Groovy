@@ -1,0 +1,25 @@
+group 'ru.velkomfood.prod.services.beagle'
+version '1.1'
+
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: '/usr/sap/JCo', include: 'groovy-all-2.4.12.jar')
+    compile fileTree(dir: '/usr/sap/JCo', include: 'sqlite-jdbc-3.20.0.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    baseName = project.name
+    version = project.version
+    manifest {
+        attributes(
+                'Main-Class': 'ru.velkomfood.prod.services.beagle.Launcher',
+                'Class-Path': configurations.runtime.collect() { '/usr/sap/JCo/' + it.name }.join(' ')
+        )
+    }
+}
