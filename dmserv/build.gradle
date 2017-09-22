@@ -1,0 +1,52 @@
+group 'ru.velkomfood.mysap.dms'
+version '2.1'
+
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile ('org.codehaus.groovy:groovy-all:2.4.12')
+    compile ('org.xerial:sqlite-jdbc:3.20.0')
+    compile fileTree(dir: 'lib', includes: ['sapidoc3.jar', 'sapjco3.jar'])
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// This is a main task for the Jar building
+jar {
+    baseName = project.name
+    version = project.version
+    manifest {
+        attributes(
+                'Main-Class': project.group + '.Starter',
+                'Class-Path': configurations.runtime.collect() { 'lib/' + it.name }.join(' ')
+        )
+    }
+} // end of main task
+
+task copyDependencies(type: Copy) {
+    from configurations.runtime
+    into 'build/libs/lib'
+}
+
+task copyLibraries(type: Copy) {
+    from fileTree(dir: 'lib', includes: ['*.jar', '*.dll'])
+    into 'build/libs/lib'
+} // end of copy libraries task
+
+// Task for the distribution creation
+task createDistributionFolder(type: Copy) {
+    from 'build/libs'
+    into 'dist'
+}
+
+task copyAuthorityFile(type: Copy) {
+    from 'R15.jcoDestination'
+    into 'dist'
+}
+
+task deleteDistribution(type: Delete) {
+    delete 'dist'
+}
